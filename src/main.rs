@@ -1,7 +1,7 @@
-use std::path::PathBuf;
-
 use clap::StructOpt;
-
+use lib::init;
+use std::path::PathBuf;
+mod lib;
 #[derive(clap::Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
@@ -43,6 +43,7 @@ enum Action {
     Status,
 }
 fn main() {
+    lib::init::init();
     let cli = Args::parse();
     match &cli.action {
         Action::Add { path } => {
