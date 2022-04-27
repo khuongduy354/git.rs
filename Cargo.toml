@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.1.12", features = ["derive"] }
 console = "0.15.0"
-md5 = "0.7.0"
+rust-crypto = "0.2.36"
 regex = "1.5.5"

@@ -1,14 +1,15 @@
-use super::error::rgitError;
+use super::error::dgitError;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 
-pub fn init() -> Result<(), rgitError> {
+pub fn init() -> Result<(), dgitError> {
     let dir = Path::new(".dgit");
     fs::create_dir(dir)?;
+    fs::create_dir(dir.join("branches"))?;
     fs::create_dir(dir.join("objects"))?;
-    fs::create_dir(dir.join("HEADS"))?;
-    let mut head = fs::File::create(dir.join("./HEADS/head"))?;
-    head.write_all(b"HEADS/master")?;
+    fs::File::create(dir.join("index"))?;
+    let mut head = fs::File::create(dir.join("./HEAD"))?;
+    head.write_all(b"branches/master")?;
     Ok(())
 }

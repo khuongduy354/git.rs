@@ -1,5 +1,7 @@
 use clap::StructOpt;
-use lib::init;
+mod commands;
+mod types;
+use lib::{error::dgitError, init};
 use std::path::PathBuf;
 mod lib;
 #[derive(clap::Parser)]
@@ -11,7 +13,7 @@ struct Args {
 #[derive(clap::Subcommand)]
 enum Action {
     #[clap(about = "Staging")]
-    Add { path: Option<PathBuf> },
+    Add { path: PathBuf },
     #[clap(about = "Commit")]
     Commit {
         #[clap(short, long)]
@@ -42,13 +44,11 @@ enum Action {
     #[clap(about = "Staging info")]
     Status,
 }
-fn main() {
+fn main() -> Result<(), dgitError> {
     lib::init::init();
     let cli = Args::parse();
     match &cli.action {
-        Action::Add { path } => {
-            println!("Add")
-        }
+        Action::Add { path } => commands::add(path)?,
         Action::Commit { message } => {
             println!("Commit")
         }
@@ -71,4 +71,5 @@ fn main() {
             println!("Status")
         }
     }
+    Ok(())
 }

@@ -1,24 +1,25 @@
 use std::io;
 
-pub enum rgitError {
+#[derive(Debug)]
+pub enum dgitError {
     NoDirectory,
     InvalidCommit,
     InvalidIndex,
     IoError(io::Error),
 }
 
-impl std::fmt::Display for rgitError {
+impl std::fmt::Display for dgitError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            rgitError::NoDirectory => write!(f, "No directory"),
-            rgitError::InvalidCommit => write!(f, "Invalid commit"),
-            rgitError::InvalidIndex => write!(f, "Invalid index"),
-            rgitError::IoError(e) => write!(f, "IO error: {}", e),
+            dgitError::NoDirectory => write!(f, "No directory"),
+            dgitError::InvalidCommit => write!(f, "Invalid commit"),
+            dgitError::InvalidIndex => write!(f, "Invalid index"),
+            dgitError::IoError(e) => write!(f, "IO error: {}", e),
         }
     }
 }
-impl From<io::Error> for rgitError {
+impl From<io::Error> for dgitError {
     fn from(e: io::Error) -> Self {
-        rgitError::IoError(e)
+        dgitError::IoError(e)
     }
 }
