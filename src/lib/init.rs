@@ -8,7 +8,6 @@ pub fn init() -> Result<(), dgitError> {
     fs::create_dir(dir)?;
     fs::create_dir(dir.join("branches"))?;
     fs::create_dir(dir.join("objects"))?;
-    fs::File::create(dir.join("index"))?;
     let mut head = fs::File::create(dir.join("./HEAD"))?;
     head.write_all(b"branches/master")?;
     Ok(())

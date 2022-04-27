@@ -62,7 +62,7 @@ fn main() -> Result<(), dgitError> {
             println!("Switch")
         }
         Action::Init => {
-            println!("Init")
+            println!("Initialized git")
         }
         Action::Log => {
             println!("Log")

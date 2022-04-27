@@ -49,10 +49,11 @@ pub struct Index {
 impl Index {
     pub fn new() -> Result<Self, dgitError> {
         let dest = Path::new(".dgit").join("index");
-        let index = Index {
+        let mut index = Index {
             tree: BTreeMap::new(),
         };
         if !dest.exists() {
+            File::create(dest)?;
             return Ok(index);
         } else {
             index.read_index_file()?;
@@ -64,7 +65,25 @@ impl Index {
     //add data to index tree
     pub fn write_index_tree(&mut self, path: &PathBuf, hash: &str) -> Result<(), dgitError> {
         self.tree
-            .insert(hash.to_string(), path.to_str().unwrap().to_string());
+            .insert(path.to_str().unwrap().to_string(), hash.to_string());
+        Ok(())
+    }
+    //write to file
+    pub fn write_index_file(&self) -> Result<(), dgitError> {
+        let dest = Path::new(".dgit").join("index");
+        let mut file = fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(dest)?;
+        for (hash, path) in self.tree.iter() {
+            file.write_all(path.as_bytes())?;
+            file.write_all(b" ")?;
+            file.write_all(hash.as_bytes())?;
+            file.write_all(b"\n")?;
+        }
+
         Ok(())
     }
 
@@ -77,10 +96,15 @@ impl Index {
             if vec.len() != 2 {
                 return Err(dgitError::InvalidIndex);
             }
-            // insert hash as key, path as value
+            // insert  path as key, hash as value
             self.tree.insert(vec[1].to_string(), vec[0].to_string());
         }
 
+        Ok(())
+    }
+    pub fn clear_index_file() -> Result<(), dgitError> {
+        let dest = Path::new(".dgit").join("index");
+        if dest.exists() {}
         Ok(())
     }
 }
