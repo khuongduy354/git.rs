@@ -45,10 +45,14 @@ enum Action {
     Status,
 }
 fn main() -> Result<(), dgitError> {
-    lib::init::init();
     let cli = Args::parse();
     match &cli.action {
-        Action::Add { path } => commands::add(path)?,
+        Action::Init => {
+            lib::init::init()?;
+        }
+        Action::Add { path } => {
+            commands::add(path)?;
+        }
         Action::Commit { message } => {
             println!("Commit")
         }
