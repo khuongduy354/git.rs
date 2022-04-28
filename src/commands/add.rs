@@ -6,6 +6,5 @@ pub fn add(path: &PathBuf) -> Result<(), dgitError> {
     let mut index = Index::new()?;
     index.write_index_tree(path, &blob.hash)?;
     index.write_index_file()?;
-    blob.write_blob()?;
     Ok(())
 }

@@ -13,3 +13,4 @@
 
 - ISSUEs
   2 different file with the same content -> same hash
+  Sanitize path (make them of the same format starting with root)
