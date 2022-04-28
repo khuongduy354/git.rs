@@ -1,7 +1,7 @@
 use clap::StructOpt;
 mod commands;
 mod types;
-use lib::{error::dgitError, init};
+use lib::error::dgitError;
 use std::path::PathBuf;
 mod lib;
 #[derive(clap::Parser)]
@@ -48,7 +48,7 @@ fn main() -> Result<(), dgitError> {
     let cli = Args::parse();
     match &cli.action {
         Action::Init => {
-            lib::init::init()?;
+            commands::init()?;
         }
         Action::Add { path } => {
             commands::add(path)?;
