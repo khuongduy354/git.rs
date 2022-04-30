@@ -137,7 +137,7 @@ impl TreeDir {
     pub fn clear_index_file() -> Result<(), dgitError> {
         let dest = PathBuf::from(".dgit").join("index");
         if dest.exists() {
-            fs::remove_file(dest)?;
+            fs::File::create(dest)?;
         }
         Ok(())
     }
