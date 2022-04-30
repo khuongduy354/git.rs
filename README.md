@@ -1,12 +1,11 @@
 - Add
-  - add multiple files
+  - add multiple files, add empty dir
 - Commit
 
-  - write file contents to index tree from the staging area
-  - refractor ideas: insert_item(self, path),
-
-  1. insert a new tree (dirs and files) relative to the path
-  2. fix remaining path in find fn,
+  - clear index after commit
+  - write commit to files
+  - commit struct
+  - write empty dir to index tree from the staging area
 
 - END directories
   .dgit
@@ -22,7 +21,7 @@
 
 - SOLVED
   - 2 different file name with the same content, same hash -> adding file's name to hash
-  - when read from index, remove all directory that's isnt exist
+  - update deleted file -> when read from index, remove all directory that's isnt exist
 
 //commit metadata
 father-tree hash
