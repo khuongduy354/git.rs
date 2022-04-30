@@ -1,9 +1,12 @@
 - Add
-  - add a directory, add multiple files
-  - only take file name as path
+  - add multiple files
 - Commit
 
-  - write file contents from the staging area
+  - write file contents to index tree from the staging area
+  - refractor ideas: insert_item(self, path),
+
+  1. insert a new tree (dirs and files) relative to the path
+  2. fix remaining path in find fn,
 
 - END directories
   .dgit

@@ -17,7 +17,7 @@ enum Action {
     #[clap(about = "Commit")]
     Commit {
         #[clap(short, long)]
-        message: Option<String>,
+        message: String,
     },
     #[clap(about = "Change username and password")]
     Config {
@@ -53,9 +53,7 @@ fn main() -> Result<(), dgitError> {
         Action::Add { path } => {
             commands::add(path)?;
         }
-        Action::Commit { message } => {
-            println!("Commit")
-        }
+        Action::Commit { message } => commands::commit(message.to_owned())?,
         Action::Config { username, email } => {
             println!("Config")
         }
