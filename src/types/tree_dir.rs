@@ -14,16 +14,14 @@ use super::Blob;
 
 pub struct TreeDir {
     pub full_path: PathBuf,
-    pub name: String,
     pub hash: String,
     pub trees: BTreeMap<String, TreeDir>, //other trees file/dir name and its values
     pub blobs: BTreeMap<String, String>,  //blobs name and hash
 }
 
 impl TreeDir {
-    pub fn new(name: String, full_path: PathBuf) -> Self {
+    pub fn new(full_path: PathBuf) -> Self {
         TreeDir {
-            name,
             full_path,
             hash: String::from(""),
             blobs: BTreeMap::new(),
@@ -32,7 +30,6 @@ impl TreeDir {
     }
     pub fn new_root() -> Self {
         TreeDir {
-            name: "".to_string(),
             full_path: PathBuf::from("."),
             hash: String::from(""),
             blobs: BTreeMap::new(),
@@ -86,8 +83,7 @@ impl TreeDir {
         let name = rel_path.to_str().expect("read_index_file: name");
         let full_path = self.full_path.join(rel_path);
         if full_path.is_dir() {
-            self.trees
-                .insert(name.to_string(), TreeDir::new(name.to_string(), full_path));
+            self.trees.insert(name.to_string(), TreeDir::new(full_path));
         } else if full_path.is_file() {
             self.blobs.insert(
                 name.to_string(),
@@ -103,7 +99,7 @@ impl TreeDir {
         let mut content = String::new();
         //prepare dirs content, and recursively  write_files for every dir inside
         for (name, tree) in &self.trees {
-            let line = format!("tree {} {}\n", tree.hash, tree.name);
+            let line = format!("tree {} {}\n", tree.hash, name);
             content = content + &line;
         }
         //prepare blobs content
@@ -114,24 +110,23 @@ impl TreeDir {
         //remove the last \n
         content.pop();
         content.pop();
+
         Ok(content)
     }
 
     //hash all data in the tree
     pub fn update_hash(&mut self) -> Result<(), dgitError> {
-        //if current dir has no dirs inside -> hash it
-        if self.trees.len() == 0 {
-            let content = self.get_content()?;
-            let mut hasher = Sha1::new();
-            hasher.input_str(&content);
-            self.hash = hasher.result_str();
-        }
         //if current dir has dir inside -> recursively hash it
-        else if self.trees.len() > 0 {
+        if self.trees.len() > 0 {
             for (_, tree) in &mut self.trees {
                 tree.update_hash()?;
             }
         }
+        //update root tree hash
+        let content = self.get_content()?;
+        let mut hasher = Sha1::new();
+        hasher.input_str(&content);
+        self.hash = hasher.result_str();
         Ok(())
     }
     pub fn clear_index_file() -> Result<(), dgitError> {
@@ -153,8 +148,12 @@ impl TreeDir {
         let hashed = hasher.result_str();
 
         //write content to file with hash as name
-        let dest = PathBuf::from(".dgit").join("objects").join(&hashed);
-        fs::File::create(dest)?.write_all(content.as_bytes())?;
+        let dir_path = PathBuf::from(".dgit").join("objects").join(&hashed[0..2]);
+        let file_path = dir_path.join(&hashed[2..]);
+        if !dir_path.exists() {
+            fs::create_dir(&dir_path)?
+        };
+        fs::File::create(file_path)?.write_all(content.as_bytes())?;
 
         //recursively do this for every dir inside
         for (_, tree) in &mut self.trees {
@@ -186,7 +185,6 @@ impl TreeDir {
             //in case not, it'll received full path
             let mut full_path = PathBuf::from(vec[1]);
             let parent = self.find_dir(&mut full_path)?;
-
             //destructure, dir and its path
             let (mut parent, path) = parent;
             for component in path.components() {

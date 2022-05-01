@@ -1,50 +1,57 @@
+# Features working on
+
 - Add
   - add multiple files, add empty dir
 - Commit
 
-  - clear index after commit
-  - write commit to files
-  - commit struct
-  - write empty dir to index tree from the staging area
+# Final directories
 
-- END directories
-  .dgit
-  -HEAD file
-  -index file
-  -branches dir
-  -objects dir
+.dgit
+-HEAD file
+-index file
+-branches dir
+-objects dir
 
-- ISSUEs
+# ISSUEs
 
-  - problem when git add, then change then add again, the previous blob isn't deleted
-  - sanitize path (add root for every input path, check if it's abosulute or relative )
+- problem when git add, then change then add again, the previous blob isn't deleted
 
-- SOLVED
-  - 2 different file name with the same content, same hash -> adding file's name to hash
-  - update deleted file -> when read from index, remove all directory that's isnt exist
+# SOLVED
 
-//commit metadata
-father-tree hash
-committer
-message
-parent
+- update deleted file when add -> when read from index, remove all directory that's isnt exist
 
-// add a dir
-scan all files of dir -> add each of it into a tree hash, insert to index hash
-do until all of the file in dir are blobs
+# Algorithms for files manipulation
 
-//tree
--> tree
--> Vec<Blobs>
+1. Write to staging area (index file)
 
-//git commit
+- scan depend on path(recursion)
+  if it's a path to dir, take all files inside it
+  or
+  if it's a path to file, take that file
+  or
+  if it's a path to an empty dir, take the dir
+  -> Insert them into BTreeMap as hash-path key-value
+
+  After finished,
+  -> Write blobs according to BTreeMap
+
+# File representation
 
 Blob file
 data
 
 Tree file
-blob hash path
-blob hash path
-blob hash path
-tree hash path
-tree hash path
+blob hash name
+tree hash name
+
+Commit file
+commit
+message
+tree_hash
+parent_hash (if available)
+
+index file
+hash path
+
+branch file (default master)
+commit_hash
