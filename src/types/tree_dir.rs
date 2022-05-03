@@ -1,8 +1,8 @@
 use std::{
     borrow::BorrowMut,
     collections::BTreeMap,
-    fs,
-    io::Write,
+    fs::{self},
+    io::{Read, Write},
     path::{Component, PathBuf},
 };
 
@@ -10,7 +10,7 @@ use crypto::{digest::Digest, sha1::Sha1};
 
 use crate::lib::error::dgitError;
 
-use super::Blob;
+use super::{Blob, Commit};
 
 pub struct TreeDir {
     pub full_path: PathBuf,
@@ -28,13 +28,50 @@ impl TreeDir {
             trees: BTreeMap::new(),
         }
     }
-    pub fn new_root() -> Self {
-        TreeDir {
+    pub fn new_root() -> Result<Self, dgitError> {
+        let mut new_tree = TreeDir {
             full_path: PathBuf::from("."),
             hash: String::from(""),
             blobs: BTreeMap::new(),
             trees: BTreeMap::new(),
+        };
+
+        //if first commit, return new tree
+        let latest_commit = Commit::get_latest_commit();
+        if latest_commit == "" {
+            return Ok(new_tree);
         }
+
+        //if second commit, parse from previous
+        let mut content = String::from("");
+        let objects_path = PathBuf::from(".dgit").join("objects");
+
+        fs::File::open(
+            objects_path
+                .join(latest_commit[0..2].to_string())
+                .join(latest_commit[2..].to_string()),
+        )?
+        .read_to_string(&mut content)?;
+        let root_tree = content.lines().nth(2).expect("Failed to get root tree");
+
+        //parse from root tree to new  tree
+        let mut tree_content = String::from("");
+        fs::File::open(
+            objects_path
+                .join(root_tree[0..2].to_string())
+                .join(root_tree[2..].to_string()),
+        )?
+        .read_to_string(&mut tree_content)?;
+        tree_content.lines().for_each(|line: &str| {
+            let vec = line.split(" ").collect::<Vec<_>>();
+            let file_name = vec[2];
+            new_tree
+                .insert_item(&PathBuf::from(file_name))
+                .expect("Failed to insert item");
+        });
+
+        //step 3 return new tree
+        Ok(new_tree)
     }
 
     //return the furthest dir available
@@ -82,6 +119,7 @@ impl TreeDir {
         //step 2 insert depend on file/dir
         let name = rel_path.to_str().expect("read_index_file: name");
         let full_path = self.full_path.join(rel_path);
+
         if full_path.is_dir() {
             self.trees.insert(name.to_string(), TreeDir::new(full_path));
         } else if full_path.is_file() {
@@ -108,7 +146,6 @@ impl TreeDir {
             content = content + &line;
         }
         //remove the last \n
-        content.pop();
         content.pop();
 
         Ok(content)
@@ -185,6 +222,7 @@ impl TreeDir {
             //in case not, it'll received full path
             let mut full_path = PathBuf::from(vec[1]);
             let parent = self.find_dir(&mut full_path)?;
+
             //destructure, dir and its path
             let (mut parent, path) = parent;
             for component in path.components() {

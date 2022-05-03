@@ -28,7 +28,7 @@ impl Commit {
             return "".to_string();
         } else {
             let mut file = fs::File::open(master_file).expect("Failed to open master file");
-            let mut hash = String::new();
+            let mut hash = String::from("");
             file.read_to_string(&mut hash)
                 .expect("Failed to read master file");
             return hash;

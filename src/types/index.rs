@@ -5,6 +5,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use crypto::{digest::Digest, sha1::Sha1};
+
 use crate::{lib::error::dgitError, types::Blob};
 
 pub struct Index {
@@ -50,7 +52,23 @@ impl Index {
 
     //update all files inside a dir to tree
     pub fn update_dir_tree(&mut self, path: PathBuf) -> Result<(), dgitError> {
-        let inside_dir = fs::read_dir(path).expect("Here");
+        let inside_dir = fs::read_dir(&path).expect("Here");
+        let mut copied_dir = fs::read_dir(&path).expect("Here");
+
+        //if dir is empty, add dir
+        if copied_dir.next().is_none() {
+            //hash empty dir
+            let mut str = String::from("");
+            let mut hasher = Sha1::new();
+            hasher.input_str(&str);
+            let hashed = hasher.result_str();
+
+            //update it
+            self.update_file_tree(path, &hashed)?;
+            return Ok(());
+        }
+
+        //if dir has content, add its content
         for entry in inside_dir {
             let entry = entry?;
             if entry.path().is_dir() {
