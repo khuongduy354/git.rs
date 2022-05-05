@@ -1,7 +1,8 @@
-SUBCOMMANDS:
+# SUBCOMMANDS:
+
     add        Staging
     commit     Commit
-    help       Print this message or the help of the given subcommand(s)
+    help       How to use 
     init       Initialize before usage
     
     status     Staging info
@@ -9,7 +10,7 @@ SUBCOMMANDS:
     reset      Remove all staging 
     switch     Revert to old commits
 
-- Usage 
+# Usage 
 1. clone repo 
 2. cargo build 
 3. find target/debug/git-rust.exe and move it to where you want to use git 
