@@ -19,14 +19,13 @@ enum Action {
         #[clap(short, long)]
         message: String,
     },
-    #[clap(about = "Change username and password")]
-    Config {
-        #[clap(short, long)]
-        username: String,
-        #[clap(short, long)]
-        email: String,
-    },
-
+    // #[clap(about = "Change username and password")]
+    // Config {
+    //     #[clap(short, long)]
+    //     username: String,
+    //     #[clap(short, long)]
+    //     email: String,
+    // },
     #[clap(about = "Undo prev Staging")]
     Restore { path: Option<PathBuf> },
 
@@ -54,9 +53,7 @@ fn main() -> Result<(), dgitError> {
             commands::add(path)?;
         }
         Action::Commit { message } => commands::commit(message.to_owned())?,
-        Action::Config { username, email } => {
-            println!("Config")
-        }
+
         Action::Restore { path } => {
             println!("Restore")
         }

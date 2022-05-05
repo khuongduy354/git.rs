@@ -65,9 +65,13 @@ impl TreeDir {
         tree_content.lines().for_each(|line: &str| {
             let vec = line.split(" ").collect::<Vec<_>>();
             let file_name = vec[2];
-            new_tree
-                .insert_item(&PathBuf::from(file_name))
-                .expect("Failed to insert item");
+
+            // add to tree, if that file is still available
+            if new_tree.full_path.join(file_name).exists() {
+                new_tree
+                    .insert_item(&PathBuf::from(file_name))
+                    .expect("Failed to insert item");
+            }
         });
 
         //step 3 return new tree
