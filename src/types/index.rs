@@ -116,9 +116,9 @@ impl Index {
         Ok(())
     }
 
-    pub fn clear_index_file() -> Result<(), dgitError> {
-        let dest = Path::new(".dgit").join("index");
-        if dest.exists() {}
-        Ok(())
-    }
+    // pub fn clear_index_file() -> Result<(), dgitError> {
+    //     let dest = Path::new(".dgit").join("index");
+    //     if dest.exists() {}
+    //     Ok(())
+    // }
 }

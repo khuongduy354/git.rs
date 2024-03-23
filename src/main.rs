@@ -64,7 +64,7 @@ fn main() -> Result<(), dgitError> {
             println!("Initialized git")
         }
         Action::Log => {
-            println!("Log")
+            commands::log()?;
         }
         Action::Status => {
             println!("Status")

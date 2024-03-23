@@ -180,7 +180,6 @@ impl TreeDir {
     pub fn write_files(&mut self) -> Result<(), dgitError> {
         // STEP 1: write blobs 2 disk
         for (_, b) in self.blobs.iter() {
-            println!("writing blob: {:?}", b.data);
             b.write_blob()?;
         }
 
