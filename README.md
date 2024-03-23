@@ -1,19 +1,21 @@
 # SUBCOMMANDS:
 
-    add        Staging
-    commit     Commit
     help       How to use 
     init       Initialize before usage
-    
-    status     Staging info
+    add        Staging
+    commit     Commit
     log        Commits info
-    reset      Remove all staging 
-    switch     Revert to old commits
+   
+    // below is not implemented yet
+    diff         Show changed mades
+    switch       Revert to old commits
+    branch       show branches
+    branch <b>   new branch 
+    checkout <b> switch branch
 
 # Usage 
 1. clone repo 
 2. cargo build 
-3. find target/debug/git-rust.exe and move it to where you want to use git 
+3. binary file in:  target/debug/git-rust.exe 
 4. ./git-rust.exe init to started using
 
-Only add, commit, init, help commands work

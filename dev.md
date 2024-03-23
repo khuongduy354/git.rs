@@ -30,7 +30,6 @@ overlap of index and treedir struct
 - remove overlap of index write, only write hash done
 
 git diff   
-git log: commits  
 
 branch: show branch 
 branch <branch-name>: new branch
