@@ -16,7 +16,7 @@ pub struct TreeDir {
     pub full_path: PathBuf,
     pub hash: String,
     pub trees: BTreeMap<String, TreeDir>, //other trees file/dir name and its values
-    pub blobs: BTreeMap<String, String>,  //blobs name and hash
+    pub blobs: BTreeMap<String, Blob>,    //blobs name blob object
 }
 
 impl TreeDir {
@@ -129,9 +129,7 @@ impl TreeDir {
         } else if full_path.is_file() {
             self.blobs.insert(
                 name.to_string(),
-                Blob::from_path(&full_path)
-                    .expect("read_index_file: Blob")
-                    .hash,
+                Blob::from_path(&full_path).expect("read_index_file: Blob"),
             );
         }
         Ok(())
@@ -145,8 +143,8 @@ impl TreeDir {
             content = content + &line;
         }
         //prepare blobs content
-        for (name, hash) in &self.blobs {
-            let line = format!("blob {} {}\n", hash, name);
+        for (name, b) in &self.blobs {
+            let line = format!("blob {} {}\n", b.hash, name);
             content = content + &line;
         }
         //remove the last \n
@@ -180,6 +178,13 @@ impl TreeDir {
 
     //write trees/blobs of entire tree to files
     pub fn write_files(&mut self) -> Result<(), dgitError> {
+        // STEP 1: write blobs 2 disk
+        for (_, b) in self.blobs.iter() {
+            println!("writing blob: {:?}", b.data);
+            b.write_blob()?;
+        }
+
+        // STEP 2: write directory contents (its files'names and hashes) to disk
         //get current dir content
         let content = self.get_content()?;
 

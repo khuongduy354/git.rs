@@ -34,7 +34,6 @@ impl Index {
         if metadata.is_file() {
             let blob = Blob::from_path(path).expect("write_index: blob");
             self.update_file_tree(path.to_owned(), &blob.hash)?;
-            blob.write_blob()?;
             return Ok(());
         } else if metadata.is_dir() {
             self.update_dir_tree(path.to_owned())?;
@@ -58,7 +57,7 @@ impl Index {
         //if dir is empty, add dir
         if copied_dir.next().is_none() {
             //hash empty dir
-            let mut str = String::from("");
+            let str = String::from("");
             let mut hasher = Sha1::new();
             hasher.input_str(&str);
             let hashed = hasher.result_str();
@@ -75,7 +74,6 @@ impl Index {
                 self.update_dir_tree(entry.path())?;
             } else {
                 let blob = Blob::from_path(&entry.path())?;
-                blob.write_blob()?;
                 self.update_file_tree(entry.path(), &blob.hash)?;
             }
         }
