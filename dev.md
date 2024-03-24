@@ -15,6 +15,11 @@ git commit: commit changes: create entire new tree from index file -> write file
 **write commit**: write commit as a blob   
 **write files**: write content of staged files as blob
 
+git log: keep tracing 
+
+
+
+
 
 
 
@@ -22,14 +27,18 @@ git commit: commit changes: create entire new tree from index file -> write file
 more trees? 
 AVL, red black
 
+i dont know why i made a btree lol, maybe just separate reading and writing back 
 
-overlap of index and treedir struct
 
-# Todo: 
-- remove git add write blobs done
-- remove overlap of index write, only write hash done
 
-git diff   
+# Todo:  
+
+- diff: current commit tree, vs current working directory tree, compare of the 2, diferent hash means different.
+account for add 
+
+we can put it like path-hash map though, iterate once, and check in the other
+
+git diff
 
 branch: show branch 
 branch <branch-name>: new branch
