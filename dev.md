@@ -34,3 +34,23 @@ git diff
 branch: show branch 
 branch <branch-name>: new branch
 checkout <branch-name>: switch branch (must commit)
+
+# Jon
+Jon git
+- has decompress/encompress -> open file reader, not read string and pass whole string to compress  
+- read blob header -> read it's size -> allocate exact buffer size -> read blob to buffer  
+-> instead of allocating exact buffer, we can have a limit reader, which should not read more than X bytes.  
+(guarded read)
+- not use println cuz it print string -> use stdout.write_all, in case it a binary (images) -> stills render out  
+
+- hash writer: we need to write with zlib encoded and then hashed the thing 
+-> Wrap the encoder+hasher with HashWriter, them impl Write trait for HashWriter -> allow using macro write!, which encode then hash when called
+
+
+- commit write whole tree instead of reading from index file???  
+-> same as you recursively hash nested file first, then get the overall result and hash the outer
+
+- Object instead of separate?: this is good, for blob, tree, commit
+
+anyhow, thiserror crate
+
